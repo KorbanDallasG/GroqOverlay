@@ -73,7 +73,7 @@ Groq Overlay — плавающее окно с AI-ассистентом на �
     keytool -genkeypair -v -keystore release-key.jks -alias groq-overlay-key -keyalg RSA -keysize 2048 -validity 10000
     gradle assembleRelease --no-daemon
 
-Проект открытый: release-key.jks лежит в репозитории, пароли android/android. Хотите приватности — создайте свой keystore.
+Релизный APK подписан ключом разработчика. Чтобы собрать свою подписанную версию — создайте собственный keystore командой выше.
 
 ---
 

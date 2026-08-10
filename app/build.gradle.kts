@@ -17,18 +17,22 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file("release-key.jks")
-            storePassword = "android"
-            keyAlias = "groq-overlay-key"
-            keyPassword = "android"
+        if (file("release-key.jks").exists()) {
+            create("release") {
+                storeFile = file("release-key.jks")
+                storePassword = "android"
+                keyAlias = "groq-overlay-key"
+                keyPassword = "android"
+            }
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            if (file("release-key.jks").exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

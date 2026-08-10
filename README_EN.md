@@ -73,7 +73,7 @@ The APK will be at app/build/outputs/apk/debug/.
     keytool -genkeypair -v -keystore release-key.jks -alias groq-overlay-key -keyalg RSA -keysize 2048 -validity 10000
     gradle assembleRelease --no-daemon
 
-The project is open: release-key.jks is in the repo, passwords android/android. Want privacy — create your own keystore.
+The release APK is signed with the developer key. To build your own signed version — create your own keystore with the command above.
 
 ---
 
