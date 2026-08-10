@@ -68,6 +68,13 @@ Groq Overlay — плавающее окно с AI-ассистентом на �
 
 Готовый APK окажется в app/build/outputs/apk/debug/.
 
+### Termux
+
+На Android (Termux) aapt2 из Maven не работает, поэтому укажите системный (однократно):
+
+    mkdir -p ~/.gradle
+    echo "android.aapt2FromMavenOverride=$PREFIX/bin/aapt2" >> ~/.gradle/gradle.properties
+
 ### Подписанная релизная сборка
 
     keytool -genkeypair -v -keystore release-key.jks -alias groq-overlay-key -keyalg RSA -keysize 2048 -validity 10000

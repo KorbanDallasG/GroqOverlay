@@ -68,6 +68,13 @@ Answers stream in real time, Markdown renders right in the bubbles, history is s
 
 The APK will be at app/build/outputs/apk/debug/.
 
+### Termux
+
+On Android (Termux) the Maven aapt2 binary does not work, so point AGP to the system one (one-time):
+
+    mkdir -p ~/.gradle
+    echo "android.aapt2FromMavenOverride=$PREFIX/bin/aapt2" >> ~/.gradle/gradle.properties
+
 ### Signed release build
 
     keytool -genkeypair -v -keystore release-key.jks -alias groq-overlay-key -keyalg RSA -keysize 2048 -validity 10000
