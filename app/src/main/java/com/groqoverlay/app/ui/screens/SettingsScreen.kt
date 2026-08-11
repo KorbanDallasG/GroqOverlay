@@ -325,7 +325,7 @@ fun SettingsScreen(
         Column(modifier = Modifier.weight(1f)) {
                         Text(text = "Размытие фона", style = MaterialTheme.typography.bodyLarge)
                         Text(
-            text = "Эффект размытия (Android 12+)",
+            text = "Матовое стекло: размытие, если поддерживается системой",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

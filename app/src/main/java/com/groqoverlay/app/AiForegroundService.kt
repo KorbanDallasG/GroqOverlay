@@ -10,8 +10,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.graphics.RenderEffect
-import android.graphics.Shader
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Handler
@@ -152,9 +150,30 @@ class AiForegroundService : Service() {
         val fontSize = prefs.getInt(PrefsKeys.OVERLAY_FONT_SIZE, 14)
         val cornerRadius = prefs.getInt(PrefsKeys.OVERLAY_CORNER_RADIUS, 20)
         val blurBg = prefs.getBoolean(PrefsKeys.OVERLAY_BLUR_BG, false)
+    val blurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && windowManager.isCrossWindowBlurEnabled
+    val blurActive = blurBg && blurSupported
         val view = LayoutInflater.from(this).inflate(R.layout.overlay_window, null)
         val bg = view.findViewById<View>(R.id.overlayRoot).background as? GradientDrawable
-        if (bg != null) { bg.setColor((opacity * 255 / 100) shl 24); bg.cornerRadius = dpToPx(cornerRadius).toFloat() }
+        if (bg != null) { val alphaPct = if (blurActive) opacity * 50 / 100 else opacity; bg.setColor((alphaPct * 255 / 100) shl 24); bg.cornerRadius = dpToPx(cornerRadius).toFloat() }
+    // Стеклянный блик (работает всегда)
+    if (blurBg) {
+        val glass = GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            intArrayOf(0x33FFFFFF, 0x00FFFFFF)
+        )
+        glass.cornerRadius = dpToPx(cornerRadius).toFloat()
+        val base = view.findViewById<View>(R.id.overlayRoot).background
+        view.findViewById<View>(R.id.overlayRoot).background =
+            android.graphics.drawable.LayerDrawable(arrayOf(base, glass))
+    }
+    if (blurBg) {
+        val sheen = GradientDrawable()
+        sheen.gradientType = GradientDrawable.RADIAL_GRADIENT
+        sheen.gradientRadius = resources.displayMetrics.widthPixels * 0.7f
+        sheen.colors = intArrayOf(0x26FFFFFF, 0x00FFFFFF)
+        sheen.cornerRadius = dpToPx(cornerRadius).toFloat()
+        view.background = android.graphics.drawable.LayerDrawable(arrayOf(view.background, sheen))
+    }
 
         adapter = MessageAdapter(
             onCopy = { copyTextToClipboard(it) },
@@ -189,9 +208,7 @@ class AiForegroundService : Service() {
                 or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, PixelFormat.TRANSLUCENT)
         params.gravity = Gravity.TOP or Gravity.START; params.x = x; params.y = y
         params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && blurBg) {
-        view.setRenderEffect(RenderEffect.createBlurEffect(25f, 25f, Shader.TileMode.CLAMP))
-    }
+    if (blurBg && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && windowManager.isCrossWindowBlurEnabled) params.setBlurBehindRadius(dpToPx(30))
 
         val title = view.findViewById<View>(R.id.title)
         val close = view.findViewById<View>(R.id.btnClose)
