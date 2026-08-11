@@ -10,6 +10,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Handler
@@ -187,7 +189,9 @@ class AiForegroundService : Service() {
                 or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, PixelFormat.TRANSLUCENT)
         params.gravity = Gravity.TOP or Gravity.START; params.x = x; params.y = y
         params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && blurBg) params.flags = params.flags or WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && blurBg) {
+        view.setRenderEffect(RenderEffect.createBlurEffect(25f, 25f, Shader.TileMode.CLAMP))
+    }
 
         val title = view.findViewById<View>(R.id.title)
         val close = view.findViewById<View>(R.id.btnClose)
