@@ -12,3 +12,4 @@ captures/
 *.aab
 *.ap_
 *.jks
+*_tmp
